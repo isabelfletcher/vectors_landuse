@@ -55,9 +55,6 @@ p <- ggplot(data=world) +
 
 # Number of studies and by land use
 n_studies <- read.csv("data/inla_input/abundance.csv") %>%
-  #subset(genus == "Anopheles" | genus == "Aedes") %>%
-  #subset(land_use != "cannot decide",
-   #      land_use_intensity != "cannot decide") %>%
   dplyr::summarise(n = length(unique(study_number)))
 
 n_sites <- read.csv("data/inla_input/abundance.csv")   %>%
@@ -67,13 +64,6 @@ n_sites <- read.csv("data/inla_input/abundance.csv")   %>%
   dplyr::summarise(n = length(unique(site_number)))
 
 n_lu <- read.csv("data/inla_input/abundance.csv")  %>%
-  #subset(genus == "Anopheles" | genus == "Aedes") %>%
-  #subset(land_use != "cannot decide",
-  #       land_use_intensity != "cannot decide") %>%
-  # combine cropland, pasture and plantation into single land use
-  #mutate(land_use = ifelse(land_use == "pasture" | 
-  #                           land_use == "plantation" |
-   #                          land_use == "cropland", "managed", land_use)) %>%
   dplyr::group_by(land_use) %>%
   dplyr::summarise(n = length(unique(site_number)))
 n_lu <- n_lu[c(2,3,1,4),]
@@ -204,7 +194,7 @@ ggsave("figures/main/figure1", p, device = "tiff", width = 8, height = 4.5, unit
 ############# Figure 2
 # Anopheles and Aedes abundance
 files <- list.files("models/abundance", pattern = "_lui_mod", full.names = TRUE)
-files <- c(files[1], files[3])
+files <- c(files[1], files[2])
 
 data <- NULL
 for (i in files){
@@ -241,7 +231,7 @@ abundance_plot <- plot_estimates(data, "intensity", "abundance") +
 
 # Anopheles and Aedes species richness
 files <- list.files("models/richness", pattern = "_lui_mod", full.names = TRUE)
-files <- c(files[1], files[3])
+files <- c(files[1], files[2])
 
 data <- NULL
 for (i in files){
@@ -286,8 +276,6 @@ ggsave("figures/main/figure2", device = "tiff", width = 8.5, height = 4, units =
 ################################################################################
 ############# Figure 3
 files <- list.files("models/abundance/species", pattern = "_lui_mod", full.names = TRUE)
-files <- files[grepl("v2", files) == FALSE]
-
 
 data <- NULL
 for (i in files){
@@ -305,9 +293,6 @@ data[data$land_use == "primary vegetation-minimal", 2:4] <- 0 # intercept
 
 # difference from intercept
 data[ , 2:4 ] = (exp(data[ 2:4]) - 1)*100
-
-# Remove high uncertainty estimates
-#data[data$species == "anopheles albimanus" & data$land_use == "urban", 2:4] <- NA
 
 cols <- c("#479A97", "#a37800", "#ffbe0c", "#6741ad")
 
@@ -456,8 +441,7 @@ load("functions/extract_residuals.RData")
 
 # Plot model residuals
 # Abundance
-files <- list.files("models/abundance", pattern = "_lui", full.names = TRUE)
-files <- files[grepl("v2", files) == FALSE]
+files <- list.files("models/abundance", pattern = "_lui_mod", full.names = TRUE)
 
 residuals <- NULL
 for (i in files){
@@ -495,8 +479,8 @@ abun_residuals <-
   geom_abline(intercept = coef(fit)[1], slope = coef(fit)[2], col='darkred') 
 
 # Species richness
-files <- list.files("models/richness", full.names = TRUE, pattern = "_lui")
-files <- files[grepl("v2", files) == FALSE]
+files <- list.files("models/richness", full.names = TRUE, pattern = "_lui_mod")
+
 residuals <- NULL
 for (i in files){
   load(i)
@@ -600,8 +584,8 @@ ggsave("figures/supplementary/figureS3", device = "tiff", width = 7, height = 7,
 ############# Figure S4 - total abundance and richness responses
 
 # Total species richness
-files <- list.files("models/richness", pattern = "_lui", full.names = TRUE)
-load(files[5])
+files <- list.files("models/richness", pattern = "_lui_mod", full.names = TRUE)
+load(files[3])
 
 data <- extract_estimates2(mod, "intensity")
 
@@ -655,7 +639,7 @@ ggsave("figures/supplementary/figureS4", device = "tiff", width = 8.5, height = 
 # Geographical cross-validation
 ##### Aedes
 # Abundance
-files <- list.files("models/abundance/cross_validation", pattern = "s_w_brazil_lui", full.names = TRUE)
+files <- list.files("models/abundance/cross_validation", pattern = "brazil_lui", full.names = TRUE)
 load(files[1])
 data <- extract_estimates2(mod, "intensity") %>% mutate(model = "without Brazil")
 
@@ -682,7 +666,7 @@ aedes_abun_plot <- data %>%
   guides(shape="none")
 
 # Richness
-files <- list.files("models/richness/cross_validation", pattern = "s_w_brazil_lui", full.names = TRUE)
+files <- list.files("models/richness/cross_validation", pattern = "brazil_lui", full.names = TRUE)
 load(files[1])
 data <- extract_estimates2(mod, "intensity") %>% mutate(model = "without Brazil")
 
@@ -710,7 +694,7 @@ aedes_rich_plot <- data %>%
 
 ##### Anopheles
 # Abundance
-files <- list.files("models/abundance/cross_validation", pattern = "s_w_brazil_lui", full.names = TRUE)
+files <- list.files("models/abundance/cross_validation", pattern = "brazil_lui", full.names = TRUE)
 load(files[2])
 data <- extract_estimates2(mod, "intensity") %>% mutate(model = "without Brazil")
 
@@ -737,7 +721,7 @@ anopheles_abun_plot <- data %>%
   guides(shape="none")
 
 # Richness
-files <- list.files("models/richness/cross_validation", pattern = "s_w_brazil_lui", full.names = TRUE)
+files <- list.files("models/richness/cross_validation", pattern = "brazil_lui", full.names = TRUE)
 load(files[2])
 data <- extract_estimates2(mod, "intensity") %>% mutate(model = "without Brazil")
 
@@ -774,13 +758,13 @@ ggsave("figures/supplementary/figureS5", device = "tiff", width = 7, height = 6,
 ############# Figure S6
 # Biome sensitivity analysis
 # Anopheles and Aedes abundance
-files <- list.files("models/americas/cross_validation/biome", pattern = "anopheles", full.names = TRUE)
+files <- list.files("models/abundance/cross_validation/biome", pattern = "anopheles", full.names = TRUE)
 
 data <- NULL
 for (i in files){
   load(i)
   
-  model_name <- gsub("_lui_mod.RData", "", gsub("models/americas/cross_validation/biome/anopheles_", "", i))
+  model_name <- gsub("_lui_mod.RData", "", gsub("models/abundance/cross_validation/biome/anopheles_", "", i))
   data <- rbind(data,
                 extract_estimates2(mod, "intensity") %>% mutate(model = model_name))
   
@@ -799,7 +783,7 @@ anopheles_abundance_plot <-
   scale_colour_discrete(labels = function(x) str_wrap(x, width = 20))
 
 
-files <- list.files("models/cross_validation/biome", pattern = "aedes", full.names = TRUE)
+files <- list.files("models/abundance/cross_validation/biome", pattern = "aedes", full.names = TRUE)
 
 data <- NULL
 for (i in files){
@@ -889,20 +873,6 @@ biome_data <- merge(biome_shp, definitions, by = c("BIOME"))
 
 # Plot study sites
 sp_data <- read.csv("data/inla_input/abundance.csv") %>% 
-  #subset(genus == "Anopheles" | genus == "Aedes") %>%
-  #subset(land_use != "cannot decide",
-  #       land_use_intensity != "cannot decide") %>% 
-  #mutate(species_name = paste0(genus, " ", species)) %>% 
-  # combine cropland, pasture and plantation into single land use
-  #mutate(land_use = ifelse(land_use == "pasture" | 
-  #                           land_use == "plantation" |
-  #                           land_use == "cropland", "managed", land_use)) %>%
-  # combine light and intense land use into single category 
-  #mutate(land_use_intensity_agg = ifelse(land_use_intensity == "light" | 
-  #                                         land_use_intensity == "intense", 
-#                                      "substantial", land_use_intensity)) %>%
-# create single categorical variable of land use and intensity
-#mutate(LUI = paste0(land_use, "-", land_use_intensity_agg)) %>%
 dplyr::select(lat, lon, land_use, land_use_intensity_agg) %>%
   unique() %>%
   mutate(land_use = factor(land_use, levels = c("primary vegetation", "secondary vegetation", "managed", "urban")),
@@ -924,8 +894,6 @@ map <- merge(biome_shp, biome_data, by = c("BIOME")) %>%
         legend.text = element_text(size = 9),
         legend.key.size = unit(0.2, "cm"),
         plot.subtitle = element_text(face="bold", hjust = -0.3)) +
-  #geom_point(data = sp_data, colour = "red", #stroke = 0.2,
-  #       size = 0.4, alpha = 1) +#, shape = 21) +
   geom_point(aes(x = lon, y = lat), data = sp_data, colour = "red", size=0.45) +
   coord_sf(xlim = c(-120, -30), ylim = c(-57, 35), expand = FALSE) +
   guides(fill=guide_legend(nrow=5,byrow=TRUE)) +
@@ -1055,9 +1023,7 @@ for (i in files[1:8]){
   data <- rbind(data,
                 extract_estimates2(mod, "intensity") %>% 
                   mutate(species = gsub("_", " ", gsub("_lui_mod.RData", "" , gsub("models/abundance/cross_validation/species/", "", i))),
-                         model = "without")) #%>%
-    #mutate(species = sub("anopheles ", "", species)) %>%
-    #mutate(species = sub("aedes ", "", species))
+                         model = "without")) 
 }
 
 # Add model not omitting species
@@ -1086,3 +1052,7 @@ data %>% mutate(g = gsub(" .*", "", species)) %>%
   theme(strip.background = element_blank(),
         strip.text = element_text(colour = "black", face = "italic"))
 ggsave("figures/supplementary/figureS8", device = "tiff", width = 7, height = 8, units = "in", dpi = 500)  
+
+
+
+
