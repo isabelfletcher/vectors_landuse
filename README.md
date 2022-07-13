@@ -11,6 +11,7 @@ The analysis workflow is as follows:
 - Model selection procedure for selecting the best random effects structure for models of mosquito abundance and species richness
 - Running of selected models
 - Extracting percentage forest loss in last five years for primary and secondary vegetation sites 
+- Running of models for the impact of recent deforestation on mosquito biodiversity
 - Conducting sensitivity analysis where influential data points are left out from models
 - Visualisation of results
 - Tables included in supplementary materials
