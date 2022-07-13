@@ -1,4 +1,75 @@
-## This script provides functions used for analysis and data visualisation
+###########################################################################
+# Calculate scaled sampling effort for each study
+# data: dataframe (df)
+
+scale_sampling_effort <- function(data){
+  
+  data_rescaled <- NULL
+  
+  for (i in 1:length(unique(data$study_number))){
+  
+  df <- data %>% subset(study_number == unique(data$study_number)[i]) 
+  
+  # if study has single sampling effort
+  if(length(unique(df$sampling_effort)) == 1){
+    
+    df$rescaled_sampling_effort <- 1
+    
+  # if study has multiple sampling effort
+  } else if(length(unique(df$sampling_effort)) > 1){
+    
+    # rescale largest sampling effort = 1
+    max_effort <- max(df$sampling_effort)
+    df$rescaled_sampling_effort[df$sampling_effort == max_effort] <- 1
+    
+    # sampling effort not = 1 
+    sampling_effort_vec <- unique(df$sampling_effort)[!unique(df$sampling_effort) %in% max_effort]
+    
+    for (i in sampling_effort_vec){
+      
+      # divide sampling effort by max effort
+      df$rescaled_sampling_effort[df$sampling_effort == i] <- i/max_effort
+    }
+    
+  }
+  
+  # combine data
+  data_rescaled <- rbind(data_rescaled, df)
+  
+  }
+  
+  return(data_rescaled)
+  
+}
+save(scale_sampling_effort, file = "functions/scale_sampling_effort.RData")
+
+###########################################################################
+# Assign study sample for each observation within a study
+# Dataframe of single study (chr)
+
+assign_study_sample <- function(study_data){
+  
+  study_data <- study_data %>% 
+    # create a unique variable of sampling methods
+    mutate(study_sample = as.factor(paste(collection, sample_season, sample_daytime, 
+                                          development_stage, sampling_method, sample_start, 
+                                          sample_end, sample_month, sep = ",")))
+  
+  # reset factor levels with 1:number unique sampling methods
+  levels(study_data$study_sample) <- c(1:length(unique(study_data$study_sample)))
+  
+  # add study number
+  study_data <- study_data %>% mutate(study_sample = as.factor(paste(study_data$study_number[1], study_sample, sep = "_")))
+  
+  return(study_data)
+  
+}
+save(assign_study_sample, file = "functions/assign_study_sample.RData")
+
+###########################################################################
+# Calculate sampling effort
+
+
 
 ###########################################################################
 # Set factor levels (for non-aggregated land use classes)
@@ -16,7 +87,7 @@ save(set_factor_levels, file = "functions/set_factor_levels.RData")
 
 ###########################################################################
 # Aggregate land use classes
-# data (df)
+# df
 # all species or specific dataframe (chr)
 
 aggregate_lui <- function(data, species){
@@ -95,7 +166,7 @@ run_mod_selection <- function(df_inla, land_use_var, response, filename, species
                   verbose = FALSE,
                   control.predictor=list(compute = TRUE),
                   control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-      save(mod, file = paste0("models/abundance/model_selection/", i, filename, mod_name, "_mod.RData"))
+      save(mod, file = paste0("models/americas/abundance/model_selection/", i, filename, mod_name, "_mod.RData"))
     }else{
       
       mod <- inla(formula, data = df_inla,
@@ -104,7 +175,7 @@ run_mod_selection <- function(df_inla, land_use_var, response, filename, species
                   control.predictor=list(compute = TRUE, link = 1),
                   #control.family = list(link = "log"),
                   control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-      save(mod, file = paste0("models/richness/model_selection/", i, filename, mod_name, "_mod.RData"))
+      save(mod, file = paste0("models/americas/richness/model_selection/", i, filename, mod_name, "_mod.RData"))
     }
     
     
@@ -151,7 +222,7 @@ run_mod <- function(df_inla, land_use_var, response, filename, species){
                 verbose = FALSE,
                 control.predictor=list(compute = TRUE),
                 control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-    save(mod, file = paste0("models/abundance/", filename, mod_name, "_mod.RData"))
+    save(mod, file = paste0("models/americas/abundance/", filename, mod_name, "_mod.RData"))
   }else{
     
     formula <- formula(paste(response, var, 
@@ -161,8 +232,9 @@ run_mod <- function(df_inla, land_use_var, response, filename, species){
                 family = "poisson", E = 1,
                 verbose = FALSE,
                 control.predictor=list(compute = TRUE, link = 1),
+                #control.family = list(link = "log"),
                 control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-    save(mod, file = paste0("models/richness/", filename, mod_name, "_mod.RData"))
+    save(mod, file = paste0("models/americas/richness/", filename, mod_name, "_mod.RData"))
   }
   
 }
@@ -174,7 +246,6 @@ save(run_mod, file = "functions/run_mod.RData")
 # land use var - land use or land use intensity (chr)
 # response - abundance or richness (chr)
 # filename - name and extended path where to save model (chr)
-# deforest_var - option to include deforestaton as linear or non linear variable (chr)
 # species - include species in model? Y or N (chr)
 run_deforest_mod <- function(df_inla, response, deforest_var, filename, species){
   
@@ -207,7 +278,7 @@ run_deforest_mod <- function(df_inla, response, deforest_var, filename, species)
                 verbose = FALSE,
                 control.predictor=list(compute = TRUE),
                 control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-    save(mod, file = paste0("models/abundance/", filename, mod_name, "_mod.RData"))
+    save(mod, file = paste0("models/americas/abundance/", filename, mod_name, "_mod.RData"))
   }else{
     
     formula <- formula(paste(response, var, 
@@ -219,7 +290,7 @@ run_deforest_mod <- function(df_inla, response, deforest_var, filename, species)
                 control.predictor=list(compute = TRUE, link = 1),
                 #control.family = list(link = "log"),
                 control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-    save(mod, file = paste0("models/richness/", filename, mod_name, "_mod.RData"))
+    save(mod, file = paste0("models/americas/richness/", filename, mod_name, "_mod.RData"))
   }
   
 }
@@ -230,11 +301,11 @@ save(run_deforest_mod, file = "functions/run_deforest_mod.RData")
 # Create df of species richness for cross-validation models, where some species are left out 
 
 # species - which species to leave out (chr)
-# genus  - total, aedes or anopheles species richness (chr)
+# genus  - total, aedes or anopheles species richness
 
 create_richness_df <- function(species_out, genus){
   
-  data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all")
+  data <- read.csv("data/input/americas/inla_input/abundance.csv") %>% aggregate_lui("all")
   
   if(genus == "total"){
   
@@ -350,7 +421,7 @@ save(create_richness_df, file = "functions/create_richness_df.RData")
 # Create richness df for deforestation analysis
 create_deforest_richness_df <- function(genus){
   
-  data <- read.csv("data/inla_input/deforestation_data.csv") 
+  data <- read.csv("data/input/americas/inla_input/deforestation_data.csv") 
   
   # Total species richness
   if(genus == "total"){
@@ -410,7 +481,7 @@ save(create_deforest_richness_df, file = "functions/create_deforest_richness_df"
 ###########################################################################
 # Extract fixed effects from land use models
 # mod - model
-# land use var - land use or land use intensity (chr)
+# land use var - land use or land use intensity
 
 extract_estimates <- function(mod, land_use_var){
   
@@ -454,7 +525,7 @@ save(extract_estimates, file = "functions/extract_estimates.RData")
 ###########################################################################
 # Extract fixed effects from land use models - version 2 (for aggregated land use classes)
 # mod - model
-# land use var - land use or land use intensity (chr)
+# land use var - land use or land use intensity
 
 extract_estimates2 <- function(mod, land_use_var){
   
@@ -496,7 +567,7 @@ save(extract_estimates2, file = "functions/extract_estimates2.RData")
 ###########################################################################
 # Extract fixed effects from deforestation models
 # mod - model
-# deforest var - linear or non-linear deforestation (chr)
+# deforest var - linear or non-linear deforestation
 
 extract_deforest_estimates <- function(mod, deforest_var){
 
@@ -596,9 +667,6 @@ save(plot_estimates, file = "functions/plot_estimates.RData")
 
 ###########################################################################
 # Plot estimates for cross-validation
-# df - dataframe of model estimates to be plotted
-# land_use_var - land use or land use intensity
-# model response - abundance or richness
 
 plot_estimates_cross <- function(df, land_use_var, response){
   
@@ -643,17 +711,13 @@ save(plot_estimates_cross, file = "functions/plot_estimates_cross.RData")
 
 # Extract fitted values and residuals from model
 
-# mod - model to be plotted
-# genus - mosquito genus (Aedes or Anopheles, or total)
-# model response - abundance or richness
-
 extract_residuals <- function(mod, genus, response){
   
   if (response == "abundance"){
     
     if (grepl("Anopheles", genus)==TRUE){
       
-      data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>% 
+      data <- read.csv("data/input/americas/inla_input/abundance_unscaled_sampling_effort.csv") %>% aggregate_lui("all") %>% 
         subset(genus == "Anopheles") %>%
         mutate(abundance = measurement_adj) %>%
         dplyr::group_by(site_number, study_block, study_number, study_sample, species_name, LUI, biome) %>%
@@ -665,7 +729,7 @@ extract_residuals <- function(mod, genus, response){
              genus = genus)
   
     }else{if(grepl("Aedes", genus)==TRUE){
-      data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>% 
+      data <- read.csv("data/input/americas/inla_input/abundance_unscaled_sampling_effort.csv") %>% aggregate_lui("all") %>% 
         subset(genus == "Aedes") %>%
         mutate(abundance = measurement_adj) %>%
         dplyr::group_by(site_number, study_block, study_number, study_sample, species_name, LUI, biome) %>%
@@ -679,7 +743,7 @@ extract_residuals <- function(mod, genus, response){
       
       
     }  else{
-      data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>% 
+      data <- read.csv("data/input/americas/inla_input/abundance_unscaled_sampling_effort.csv") %>% aggregate_lui("all") %>% 
         mutate(abundance = measurement_adj) %>%
         dplyr::group_by(site_number, study_block, study_number, study_sample, species_name, LUI, biome) %>%
         dplyr::summarise(abundance = sum(abundance)) %>%
@@ -692,20 +756,20 @@ extract_residuals <- function(mod, genus, response){
     }
   } else {
     if(grepl("Anopheles", genus)==TRUE){
-      data <- read.csv("data/inla_input/ano_richness.csv") %>%
+      data <- read.csv("data/input/americas/inla_input/ano_richness_unscaled_sampling_effort.csv") %>%
         mutate(response_value = richness,
                response_fitted = mod$summary.fitted.values$mean) %>%
         mutate(residuals = response_fitted - response_value,
                genus = "Anopheles")
     } else {
       if(grepl("Aedes", genus)==TRUE){
-        data <- read.csv("data/inla_input/aed_richness.csv") %>%
+        data <- read.csv("data/input/americas/inla_input/aed_richness_unscaled_sampling_effort.csv") %>%
           mutate(response_value = richness,
                  response_fitted = mod$summary.fitted.values$mean) %>%
           mutate(residuals = response_fitted - response_value,
                  genus = "Aedes")
       } else{
-        data <- read.csv("data/inla_input/richness.csv") %>%
+        data <- read.csv("data/input/americas/inla_input/richness_unscaled_sampling_effort.csv") %>%
           mutate(response_value = richness,
                  response_fitted = mod$summary.fitted.values$mean) %>%
           mutate(residuals = response_fitted - response_value,
@@ -717,3 +781,56 @@ extract_residuals <- function(mod, genus, response){
   
 }
 save(extract_residuals, file = "functions/extract_residuals.RData")
+
+###########################################################################
+# Calculate Moran's I for each study
+
+calculate_moran <- function(response, residuals){
+  
+  moran_df <- NULL
+  for (i in unique(data$study_number)){
+    
+    df <- data %>% subset(study_number == i) 
+    
+    # remove Inf
+    df$residuals[df$residuals == "Inf"] <- NA
+    coords <- cbind(df$lon, df$lat)
+    
+    # remove NA
+    coords1 = coords[!is.na(df$residuals),]
+    variable1 = df$residuals[!is.na(df$residuals)]
+    
+    # subsample total data (saves time) if !is.na(subset)
+    subset <- NA
+    if(!is.na(subset)){ 
+      sub = sample(1:nrow(coords1), subset)
+      variable1 = variable1[sub]
+      coords1 = coords1[sub,]
+    } 
+    
+    # Create distance matrix
+    dists.mat = distm(as.matrix(coords1), fun=distHaversine)
+    dists.inv = 1/dists.mat
+    dists.inv[ dists.inv == "Inf"] = 0 # sets 0 for instances where coordinates of two sites are identical
+    diag(dists.inv) = 0
+    
+    # Calculate weights matrix
+    lw = mat2listw(dists.inv) 
+    lww = nb2listw(lw$neighbours, glist=lw$weights, style="W")
+    
+    # Moran's I test
+    m <- moran.mc(variable1, lww, nsim = 2) 
+    
+    moran_df <- rbind(moran_df,
+                      data.frame(response = response, 
+                                 study_number = i,
+                                 statistic     = as.numeric(m$statistic),
+                                 pval          = m$p.value)) %>%
+      tibble::remove_rownames()
+  }
+  
+  return(moran_df)
+  
+}
+save(calculate_moran, file = "functions/calculate_moran.RData")
+###########################################################################
