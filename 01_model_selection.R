@@ -192,4 +192,3 @@ richness_models %>% dplyr::arrange(Variable,Genus, Model) %>%
   mutate(DIC = round(DIC, 2),
          WAIC = round(WAIC, 2)) %>%
   write.csv("figures/supplementary/richness_model_selection.csv", row.names = FALSE)
-
