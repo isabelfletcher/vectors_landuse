@@ -3,14 +3,14 @@
 
 ################################################################################
 
-pacman::p_load("dplyr", "tibble", "sp")
+pacman::p_load("dplyr", "tibble", "sp", "stringr")
 
 # Load functions
 load("functions/extract_estimates2.RData")
 load("functions/extract_deforest_estimates.RData")
 ################################################################################
 
-# 5.3.1. Dataset
+## Dataset
 data <- read.csv("data/inla_input/abundance.csv") 
 
 # Total number of records 
@@ -117,10 +117,10 @@ data %>% subset(genus == "Anopheles") %>%
 
 ################################################################################
 
-# 5.3.2. 
+## Effect of land use change on species richness and abundance
 ##### difference in Anopheles and Aedes richness in urban areas
 files <- list.files("models/richness", pattern = "_lui", full.names = TRUE)
-files <- c(files[1], files[3])
+files <- c(files[1], files[2])
 
 data <- NULL
 for (i in files){
@@ -150,7 +150,7 @@ data %>% subset(land_use == "urban") %>%
 
 ##### difference in Anopheles abundance in urban and managed
 files <- list.files("models/abundance", pattern = "_lui", full.names = TRUE)
-files <- c(files[1], files[3])
+files <- c(files[1], files[2])
 
 data <- NULL
 for (i in files){
@@ -198,10 +198,9 @@ data %>% mutate(mean = round(mean, 0),
 
 ################################################################################
 
-# 5.3.3. Species-specific abundance
+## Species-specific abundance responses
 
 files <- list.files("models/abundance/species", pattern = "_lui_mod", full.names = TRUE)
-files <- files[grepl("v2", files) == FALSE]
 
 data <- NULL
 for (i in files){
@@ -220,9 +219,9 @@ data[data$land_use == "primary vegetation-minimal", 2:4] <- 0 # intercept
 # difference from intercept
 data[ , 2:4 ] = (exp(data[ 2:4]) - 1)*100
 
-#### Aedes
-data %>% subset(species == "aedes aegypti" | species == "aedes albopictus") %>%
-  subset(land_use == "urban") %>% dplyr::select(land_use, species, mean, lci, uci) %>%
+# Aedes
+data %>% subset(species == "aedes aegypti") %>%
+  subset(land_use == "managed") %>% dplyr::select(land_use, species, mean, lci, uci) %>%
   mutate(mean = round(mean, 0),
          lci = round(lci, 1),
          uci = round(uci, 1))
@@ -234,8 +233,8 @@ data %>% subset(species == "aedes aegypti" | species == "aedes albopictus") %>%
          lci = round(lci, 1),
          uci = round(uci, 1))
 
-data %>% subset(species == "aedes aegypti") %>%
-  subset(land_use == "managed") %>% dplyr::select(land_use, species, mean, lci, uci) %>%
+data %>% subset(species == "aedes aegypti" | species == "aedes albopictus") %>%
+  subset(land_use == "urban") %>% dplyr::select(land_use, species, mean, lci, uci) %>%
   mutate(mean = round(mean, 0),
          lci = round(lci, 1),
          uci = round(uci, 1))
@@ -254,22 +253,21 @@ data %>% subset(species == "anopheles albitarsis") %>%
          lci = round(lci, 1),
          uci = round(uci, 1))
 
-# number of An. albimanus urban sites
+# number of An. albimanus sites by land use
 data <- read.csv("data/inla_input/abundance.csv") 
 
 data %>% mutate(land_use = ifelse(land_use == "pasture" | 
                                     land_use == "plantation" |
                                     land_use == "cropland", "managed", land_use)) %>%
   subset(species_name == "Anopheles albimanus") %>%
-  subset(land_use == "urban") %>% 
   dplyr::group_by(land_use) %>%
   dplyr::summarise(n = length(unique(site_number)))
 
 ################################################################################
 
-# 5.3.5. Deforestation
+# Effect of deforestation
 # Richness models
-files <- list.files("models/americas/richness", pattern = "_l_deforestation", full.names = TRUE)
+files <- list.files("models/richness", pattern = "_l_deforestation_mod", full.names = TRUE)
 
 data_rich <- NULL
 for (i in files){
@@ -289,7 +287,7 @@ for (i in files){
   data_rich <- rbind(data_rich, df)
 }
 
-files <- list.files("models/americas/abundance", pattern = "_l_deforestation", full.names = TRUE)
+files <- list.files("models/abundance", pattern = "_l_deforestation_mod", full.names = TRUE)
 
 data_abun <- NULL
 for (i in files){
@@ -309,15 +307,16 @@ for (i in files){
   data_abun <- rbind(data_abun, df)
 }
 
-data_rich %>% rbind(data_abun) %>% mutate(mean = round(mean, 2),
+df <-data_rich %>% rbind(data_abun) %>% mutate(mean = round(mean, 2),
                                           lci  = round(lci, 2),
                                           uci  = round(uci, 2)) 
+df
 
+# increase in richness with every % increase in deforestation
+round((1-exp(subset(df, df$model == "richness" & genus == "Anopheles")$mean))*100)
 
-
-################################
-# Species abundance models
-files <- list.files("models/americas/abundance/species", pattern = "_l_deforestation", full.names = TRUE)
+## Species abundance models
+files <- list.files("models/abundance/species", pattern = "_l_deforestation_mod", full.names = TRUE)
 
 data <- NULL
 for (i in files){
@@ -329,18 +328,32 @@ for (i in files){
   data <- rbind(data, df)
 }
 
-data %>% mutate(mean = round(mean, 2),
+df <- data %>% mutate(mean = round(mean, 2),
                 lci  = round(lci, 2),
                 uci  = round(uci, 2)) 
 
-(exp(0.27)-1)*100
-(exp(0.10)-1)*100
+df %>% dplyr::arrange(-mean)
+
+# increase in abundance with unit increase in deforestation
+round((exp(subset(df, df$species == "Anopheles darlingi")$mean)-1)*100)
+round((exp(subset(df, df$species == "Anopheles albitarsis")$mean)-1)*100)
 
 ################################################################
 # Discussion
 load("functions/aggregate_lui.RData")
 
 # number of an. darlingi secondary vegetation sites
-data <- read.csv("data/input/americas/inla_input/abundance_unscaled_sampling_effort.csv") %>% aggregate_lui("all") %>% mutate(species_name = tolower(species_name)) %>% 
+data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>% mutate(species_name = tolower(species_name)) %>% 
   subset(species_name == "anopheles darlingi" & LUI == "secondary vegetation")
 length(unique(data$site_number))
+
+# number of secondary vegetation sites
+secondary_sites <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>% 
+  subset(LUI == "secondary vegetation")
+all_sites <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") 
+length(unique(secondary_sites$site_number))/length(unique(all_sites$site_number)) *100
+
+
+
+
+
