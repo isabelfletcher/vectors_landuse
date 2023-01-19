@@ -2,7 +2,7 @@ pacman::p_load("dplyr")
 
 # Read in data
 # subset to unassigned land use categories and where sampling effort not available
-data <- read.csv("data/input/americas/data.csv")
+data <- read.csv("data/data.csv")
 
 data <- data %>% subset(land_use != "cannot decide",
                         land_use_intensity != "cannot decide") %>%
@@ -47,38 +47,6 @@ unique(na_df$rescaled_sampling_effort)
 # set NAs to zero
 data$measurement_adj[is.na(data$measurement_adj)] <- 0
 
-################################################################################################################################## - do not do this!
-# Calculate subsite-level abundances, summing over different sampling methods - once you have included SS (experiment) you will not need to sum as this will control for it
-data_agg <- NULL
-for (i in unique(data$site_number)){
-  df <- data %>% subset(site_number == i)
-  if (length(unique(df$sample_start)) > 1 | length(unique(df$sample_end)) > 1 |
-      length(unique(df$sampling_method)) > 1 | length(unique(df$collection)) > 1 |
-      length(unique(df$sample_daytime)) > 1 | length(unique(df$sample_month)) > 1 |
-      length(unique(df$sample_season)) > 1 | length(unique(df$development_stage)) > 1 ){
-    data_agg <- rbind(data_agg, 
-                    df %>% dplyr::group_by(reference, study_number, #Site_name, 
-                                           site_number, lat, lon, country, habitat_description,
-                                         genus, species, land_use_specific, biome,
-                                         land_use, land_use_intensity, species_studied) %>%
-      dplyr::summarise(measurement_adj = sum(measurement_adj)))
-  } else {
-    # do not sum measurement
-    data_agg <- rbind(data_agg, 
-                      df %>% dplyr::group_by(reference, study_number, #Site_name, 
-                                             site_number, lat, lon, country, habitat_description,
-                                             genus, species, land_use_specific, biome,
-                                             land_use, land_use_intensity, species_studied) %>%
-                        dplyr::summarise(measurement_adj = measurement_adj))
-    
-  }
-}
-
-# Check
-data_agg %>% subset(study_number == "157") %>% as.data.frame() %>% head()
-data <- data_agg 
-##################################################################################################################################
-
 # Subset to Anopheles and Aedes, combine land use categories
 
 # Non-aggregated land use categories
@@ -114,7 +82,7 @@ for (i in unique(data_all$study_number)){
 }
 
 # Write to file
-data_lu %>% write.csv("data/input/americas/data_comb.csv")
+data_lu %>% write.csv("data/data_comb.csv")
 
 # Combined land use categories
 data <- data %>%
@@ -159,12 +127,11 @@ for (i in unique(data$study_number)){
 data <- data_lu
 
 # Write to file
-data %>% write.csv("data/input/americas/inla_input/abundance.csv")
 data %>% write.csv("data/inla_input/abundance.csv")
 
-########################################################################################
+####################################################################
 # Species richness
-data <- read.csv("data/input/americas/inla_input/abundance.csv")
+data <- read.csv("data/inla_input/abundance.csv")
 
 # Calculate site-level species richness, excluding zero records
 richness <- data %>% subset(species_studied == "multiple") %>% 
@@ -212,7 +179,7 @@ amazon_pts$amazon[is.na(amazon_pts$AREA)] <- 0
 df_all %>% 
   mutate(amazon = amazon_pts$amazon) %>% 
   # Write to file
-  write.csv("data/input/americas/inla_input/richness.csv")
+  write.csv("data/inla_input/richness.csv")
 
 df_all %>% 
   mutate(amazon = amazon_pts$amazon) %>% 
@@ -266,7 +233,7 @@ amazon_pts$amazon[is.na(amazon_pts$AREA)] <- 0
 df_all %>% 
   mutate(amazon = amazon_pts$amazon) %>% 
   # Write to file
-  write.csv("data/input/americas/inla_input/ano_richness.csv")
+  write.csv("data/inla_input/ano_richness.csv")
 
 df_all %>% 
   mutate(amazon = amazon_pts$amazon) %>% 
@@ -321,17 +288,4 @@ amazon_pts$amazon[is.na(amazon_pts$AREA)] <- 0
 df_all %>% 
   mutate(amazon = amazon_pts$amazon) %>% 
 # Write to file
-  write.csv("data/input/americas/inla_input/aed_richness.csv")
-
-df_all %>% 
-  mutate(amazon = amazon_pts$amazon) %>% 
   write.csv("data/inla_input/aed_richness.csv")
-
-  
-  
-  
-  
-  
-  
-  
- 
