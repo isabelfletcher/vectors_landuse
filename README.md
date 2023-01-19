@@ -8,6 +8,7 @@ The dataset of 10,004 mosquito abundance records across multiple land-use types 
 
 The analysis workflow is as follows:
 
+- Creation of mosquito abundance and species richness dataframes from raw data
 - Model selection procedure for selecting the best random effects structure for models of mosquito abundance and species richness
 - Running of selected models
 - Extracting percentage forest loss in last five years for primary and secondary vegetation sites 
