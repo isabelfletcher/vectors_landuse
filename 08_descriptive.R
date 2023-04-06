@@ -38,7 +38,7 @@ data %>% mutate(land_use = ifelse(land_use == "pasture" |
                                     land_use == "cropland", "managed", land_use)) %>%
   subset(land_use == "primary vegetation") %>% 
   nrow()
-# 3739/10004 = 37%
+# 3835/10244 = 37%
 
 # Number of countries
 length(unique(data$country))
@@ -100,7 +100,7 @@ data %>% subset(biome == unique(data$biome)[1] |
                   biome == unique(data$biome)[2] |
                   biome == unique(data$biome)[7]) %>% 
   dplyr::summarise(n = length(unique(site_number)))
-# 564/632
+# 609/632
 
 # Total number of species
 length(unique(data$species))
@@ -221,7 +221,13 @@ data[ , 2:4 ] = (exp(data[ 2:4]) - 1)*100
 
 # Aedes
 data %>% subset(species == "aedes aegypti") %>%
-  subset(land_use == "managed") %>% dplyr::select(land_use, species, mean, lci, uci) %>%
+  dplyr::select(land_use, species, mean, lci, uci) %>%
+  mutate(mean = round(mean, 0),
+         lci = round(lci, 1),
+         uci = round(uci, 1))
+
+data %>% subset(species == "aedes albopictus") %>%
+  dplyr::select(land_use, species, mean, lci, uci) %>%
   mutate(mean = round(mean, 0),
          lci = round(lci, 1),
          uci = round(uci, 1))
@@ -252,16 +258,6 @@ data %>% subset(species == "anopheles albitarsis") %>%
   mutate(mean = round(mean, 0),
          lci = round(lci, 1),
          uci = round(uci, 1))
-
-# number of An. albimanus sites by land use
-data <- read.csv("data/inla_input/abundance.csv") 
-
-data %>% mutate(land_use = ifelse(land_use == "pasture" | 
-                                    land_use == "plantation" |
-                                    land_use == "cropland", "managed", land_use)) %>%
-  subset(species_name == "Anopheles albimanus") %>%
-  dplyr::group_by(land_use) %>%
-  dplyr::summarise(n = length(unique(site_number)))
 
 ################################################################################
 
@@ -337,6 +333,7 @@ df %>% dplyr::arrange(-mean)
 # increase in abundance with unit increase in deforestation
 round((exp(subset(df, df$species == "Anopheles darlingi")$mean)-1)*100)
 round((exp(subset(df, df$species == "Anopheles albitarsis")$mean)-1)*100)
+round((exp(subset(df, df$species == "Aedes serratus")$mean)-1)*100)
 
 ################################################################
 # Discussion
@@ -352,8 +349,3 @@ secondary_sites <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("
   subset(LUI == "secondary vegetation")
 all_sites <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") 
 length(unique(secondary_sites$site_number))/length(unique(all_sites$site_number)) *100
-
-
-
-
-
