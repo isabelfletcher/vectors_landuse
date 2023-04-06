@@ -25,11 +25,11 @@ for (i in unique(data$study_number)){
 }
 
 # write to file
-data %>% subset(study_number %in% studies) %>% write.csv("data/hansen/data.csv")
+data %>% subset(study_number %in% studies) %>% write.csv("data/hansen/input/abundance_data.csv")
 
 ### 2. Extract points over deforestation rasters (provided as yearly rasters per grid)
 # read in data and create sp dataframe
-data <- read.csv("data/hansen/data.csv")
+data <- read.csv("data/hansen/input/abundance_data.csv")
 pts_df <- data[c(4,5)]
 pts <- SpatialPoints(pts_df, proj4string=CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
 proj4string(pts) <- CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
@@ -111,7 +111,7 @@ for (i in 1:length(files)){
 }
 
 ### 4. Temporally match site data to deforestation data
-data <- read.csv("data/hansen/data.csv") %>%
+data <- read.csv("data/hansen/input/abundance_data.csv") %>%
   # subset to years of deforestation data (2000-2019)
   subset(sample_start_year > 2000)
 
@@ -154,7 +154,7 @@ data_all <- data_all %>% mutate(deforest_prop = (cells_deforestation * cell_area
   mutate(deforest_prop = deforest_prop * 100) 
 
 ### 6. Combine with rest of dataframe and write to file
-data <- read.csv("data/hansen/data.csv") %>%
+data <- read.csv("data/hansen/input/abundance_data.csv") %>%
   subset(site_number %in% unique(data_all$site_number)) %>% 
   merge(data_all, by = c("site_number", "study_number", "lon", "lat"), all = TRUE) 
 
