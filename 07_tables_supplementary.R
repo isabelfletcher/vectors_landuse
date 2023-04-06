@@ -23,7 +23,7 @@ sites <- data %>% dplyr::group_by(LUI) %>%
 
 # number of records
 records <- data %>% dplyr::group_by(LUI) %>%
-  count() %>%
+  dplyr::count() %>%
   arrange(LUI) 
 
 merge(sites, records, by = c("LUI")) %>%
@@ -44,7 +44,7 @@ data %>%
 
 # number of records
 data %>%
-  count() 
+  dplyr::count() 
 
 # Aedes abundance
 data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>%
@@ -58,7 +58,7 @@ data %>%
 
 # number of records
 data %>%
-  count() 
+  dplyr::count() 
 
 # Anopheles abundance
 data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>%
@@ -72,7 +72,7 @@ data %>%
 
 # number of records
 data %>% 
-  count() 
+  dplyr::count() 
 
 # Richness models
 data <- read.csv("data/inla_input/richness.csv") %>% aggregate_lui("all")
@@ -84,7 +84,7 @@ data %>%
 
 # number of records
 data %>%
-  count() 
+  dplyr::count() 
 
 # Aedes richness
 data <- read.csv("data/inla_input/aed_richness.csv") %>% aggregate_lui("all")
@@ -95,7 +95,7 @@ data %>%
 
 # number of records
 data %>% 
-  count() 
+  dplyr::count() 
 
 # Anopheles richness
 data <- read.csv("data/inla_input/ano_richness.csv") %>% aggregate_lui("all")
@@ -105,7 +105,7 @@ data %>%
 
 # number of records
 data %>% 
-  count() 
+  dplyr::count() 
 
 ################################################################################
 ############# Table S6
@@ -184,23 +184,13 @@ read.csv("figures/supplementary/richness_model_selection.csv") %>%
 # abundance model selection
 read.csv("figures/supplementary/abundance_model_selection.csv") %>% 
   subset(Variable == "land use intensity") %>% 
-  #subset(Genus == "Anopheles") %>%
- # dplyr::select(DIC) %>% 
+  subset(Genus == "Anopheles") %>%
+ dplyr::select(WAIC) %>% 
   print.data.frame(row.names = F)
 
 ################################################################################
 ############# Table S9
 # Deforestation models
-# Total abundance
-data <- read.csv("data/inla_input/deforestation_data.csv") %>%
-  mutate(abundance = measurement_adj) %>%
-  dplyr::group_by(site_number, study_block, study_number, study_sample, species_name, biome) %>%
-  dplyr::summarise(abundance = sum(abundance),
-                   deforestation = unique(cells_deforestation))
-# Sites
-length(unique(data$site_number))
-# Records
-nrow(data)
 
 # Aedes abundance
 data <- read.csv("data/inla_input/deforestation_data.csv") %>%
@@ -224,13 +214,6 @@ length(unique(data$site_number))
 # Records
 nrow(data)
 
-# Total richness
-load("functions/create_deforest_richness_df.RData")
-data <- create_deforest_richness_df("total")
-# Sites
-length(unique(data$site_number))
-# Records
-nrow(data)
 
 # Aedes richness
 data <- create_deforest_richness_df("Aedes")
@@ -239,7 +222,7 @@ length(unique(data$site_number))
 # Records
 nrow(data)
 
-# Aedes richness
+# Anopheles richness
 data <- create_deforest_richness_df("Anopheles")
 # Sites
 length(unique(data$site_number))
@@ -248,15 +231,28 @@ nrow(data)
 
 ################################################################################
 ############# Table S10
+# Number of sites by country and land use
+data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all")
+data %>% 
+  dplyr::group_by(country, LUI) %>%
+  dplyr::summarise(n = length(unique(site_number))) %>% 
+  dplyr::arrange(country, LUI) %>%
+  as.data.frame() %>%
+  dplyr::select(n) %>%
+  print.data.frame(row.names = F) 
+
+################################################################################
+############# Table S11
 # Species included in abundance models - number of records per species
 read.csv("data/inla_input/abundance.csv") %>%
   dplyr::group_by(genus, species) %>%
   dplyr::count() %>%
   dplyr::arrange(genus, species) %>% as.data.frame() %>%
+  dplyr::select(n) %>%
   print.data.frame(row.names = F) 
 
 ################################################################################
-############# Table S11
+############# Table S12
 # Parameter estimates-richness models
 load("functions/extract_estimates2.RData")
 
@@ -294,7 +290,7 @@ extract_estimates2(mod, "intensity") %>% dplyr::select(mean, land_use, lci, uci)
   print.data.frame(row.names = F)
 
 ################################################################################
-############# Table S12
+############# Table S13
 # Parameter estimates-abundance models
 load("functions/extract_estimates2.RData")
 
@@ -332,7 +328,7 @@ extract_estimates2(mod, "intensity") %>% dplyr::select(mean, land_use, lci, uci)
   print.data.frame(row.names = F)
 
 ################################################################################
-############# Table S13
+############# Table S14
 # Parameter estimates- species abundance models
 files <- list.files("models/abundance/species", pattern = "_lui_mod", full.names = TRUE)
 
@@ -351,10 +347,22 @@ data %>% dplyr::select(mean, land_use, lci, uci, species) %>%
   dplyr::mutate(mean = round(mean, 2),
                 lci = round(lci, 2),
                 uci = round(uci, 2)) %>%
-  dplyr::select(mean) %>%
+  dplyr::select(uci) %>%
   print.data.frame(row.names = F)
 
+################################################################################
+############# Table S15
+# Number of sites by species and land-use type
+data <- read.csv("data/inla_input/abundance.csv") 
 
-
-
-
+data %>% mutate(land_use = ifelse(land_use == "pasture" | 
+                                    land_use == "plantation" |
+                                    land_use == "cropland", "managed", land_use)) %>%
+  subset(species_name == "Anopheles albimanus" | species_name == "Anopheles albitarsis" |
+           species_name == "Anopheles darlingi" | species_name == "Anopheles nuneztovari"|
+           species_name == "Aedes aegypti" | species_name == "Aedes albopictus"|
+           species_name == "Aedes scapularis" | species_name == "Aedes serratus") %>%
+  dplyr::group_by(land_use, species_name) %>%
+  dplyr::summarise(n = length(unique(site_number))) %>% 
+  dplyr::arrange(species_name, land_use) %>%
+  as.data.frame() 
