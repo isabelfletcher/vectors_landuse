@@ -280,14 +280,14 @@
 "279","604_1","604_1","604_1",604,"Chaves2016",-25.037955,-47.9444,"Brazil","Mangroves","primary vegetation","tropical rainforest, Atlantic forest","minimal","primary vegetation-minimal",5,0
 "280","604_2","604_1","604_1",604,"Chaves2016",-25.037955,-47.9444,"Brazil","Mangroves","primary vegetation","restinga","minimal","primary vegetation-minimal",4,0
 "281","604_3","604_2","604_1",604,"Chaves2016",-25.037955,-47.9444,"Brazil","Mangroves","managed","cropland","light","managed-substantial",3,0
-"282","681_1","681_1","681_2",681,"Smith2009",18.461758,-66.11692,"Puerto Rico",NA,"primary vegetation","forest","light","primary vegetation-substantial",1,0
-"283","681_1","681_1","681_5",681,"Smith2009",18.461758,-66.11692,"Puerto Rico",NA,"primary vegetation","forest","light","primary vegetation-substantial",1,0
-"284","681_3","681_1","681_5",681,"Smith2009",18.461758,-66.11692,"Puerto Rico",NA,"urban","low density housing, periurban","light","urban-substantial",1,0
-"285","681_4","681_1","681_2",681,"Smith2009",18.461758,-66.11692,"Puerto Rico",NA,"urban","urban green space","light","urban-substantial",1,0
-"286","681_4","681_1","681_5",681,"Smith2009",18.461758,-66.11692,"Puerto Rico",NA,"urban","urban green space","light","urban-substantial",1,0
-"287","681_5","681_1","681_1",681,"Smith2009",18.461758,-66.11692,"Puerto Rico",NA,"primary vegetation","wetland","light","primary vegetation-substantial",2,0
-"288","681_5","681_1","681_2",681,"Smith2009",18.461758,-66.11692,"Puerto Rico",NA,"primary vegetation","wetland","light","primary vegetation-substantial",2,0
-"289","681_5","681_1","681_5",681,"Smith2009",18.461758,-66.11692,"Puerto Rico",NA,"primary vegetation","wetland","light","primary vegetation-substantial",1,0
+"282","681_1","681_1","681_2",681,"Smith2009",18.451758,-66.06692,"Puerto Rico","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","forest","light","primary vegetation-substantial",1,0
+"283","681_1","681_1","681_5",681,"Smith2009",18.451758,-66.06692,"Puerto Rico","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","forest","light","primary vegetation-substantial",1,0
+"284","681_3","681_1","681_5",681,"Smith2009",18.451758,-66.06692,"Puerto Rico","Tropical & Subtropical Moist Broadleaf Forests","urban","low density housing, periurban","light","urban-substantial",1,0
+"285","681_4","681_1","681_2",681,"Smith2009",18.451758,-66.06692,"Puerto Rico","Tropical & Subtropical Moist Broadleaf Forests","urban","urban green space","light","urban-substantial",1,0
+"286","681_4","681_1","681_5",681,"Smith2009",18.451758,-66.06692,"Puerto Rico","Tropical & Subtropical Moist Broadleaf Forests","urban","urban green space","light","urban-substantial",1,0
+"287","681_5","681_1","681_1",681,"Smith2009",18.451758,-66.06692,"Puerto Rico","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","wetland","light","primary vegetation-substantial",2,0
+"288","681_5","681_1","681_2",681,"Smith2009",18.451758,-66.06692,"Puerto Rico","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","wetland","light","primary vegetation-substantial",2,0
+"289","681_5","681_1","681_5",681,"Smith2009",18.451758,-66.06692,"Puerto Rico","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","wetland","light","primary vegetation-substantial",1,0
 "290","704_2","704_2","704_2",704,"Duque2019",-0.406944444,-76.62055556,"Ecuador","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","Forest ecotone","light","primary vegetation-substantial",1,1
 "291","704_3","704_3","704_1",704,"Duque2019",-0.406944444,-76.62055556,"Ecuador","Tropical & Subtropical Moist Broadleaf Forests","urban","Urban","intense","urban-substantial",1,1
 "292","738_1","738_1","738_2",738,"Forattini1993",-24.695764,-47.902552,"Brazil","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","primitive Atlantic forest","intense","primary vegetation-substantial",7,0

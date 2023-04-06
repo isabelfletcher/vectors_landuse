@@ -146,10 +146,10 @@
 "145","1584_7","1584_7","1584_1",1584,"McKeon2013",2.7575,-60.70408333,"Brazil","Tropical & Subtropical Grasslands, Savannas & Shrublands","managed","Cropland","intense","managed-substantial",2,1
 "146","1584_8","1584_8","1584_1",1584,"McKeon2013",2.858366667,-60.62808333,"Brazil","Tropical & Subtropical Grasslands, Savannas & Shrublands","primary vegetation","Primary vegetation","minimal","primary vegetation-minimal",1,1
 "147","1584_9","1584_9","1584_1",1584,"McKeon2013",2.634233333,-60.59285,"Brazil","Tropical & Subtropical Grasslands, Savannas & Shrublands","primary vegetation","Primary vegetation","minimal","primary vegetation-minimal",2,1
-"148","1605_1","1605_1","1605_1",1605,"NaranjoDiaz2020",-76.58375,7.30875,"Colombia",NA,"managed","cropland","intense","managed-substantial",4,0
-"149","1605_2","1605_1","1605_4",1605,"NaranjoDiaz2020",-76.48955,7.3558,"Colombia",NA,"primary vegetation","grassland","intense","primary vegetation-substantial",3,0
-"150","1605_3","1605_2","1605_2",1605,"NaranjoDiaz2020",-76.57633,7.86375,"Colombia",NA,"primary vegetation","forest","intense","primary vegetation-substantial",8,0
-"151","1605_4","1605_2","1605_3",1605,"NaranjoDiaz2020",-76.60219,7.8833,"Colombia",NA,"primary vegetation","forest","intense","primary vegetation-substantial",4,0
+"148","1605_1","1605_1","1605_1",1605,"NaranjoDiaz2020",7.30875,-76.58375,"Colombia","Tropical & Subtropical Moist Broadleaf Forests","managed","cropland","intense","managed-substantial",4,0
+"149","1605_2","1605_1","1605_4",1605,"NaranjoDiaz2020",7.3558,-76.48955,"Colombia","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","grassland","intense","primary vegetation-substantial",3,0
+"150","1605_3","1605_2","1605_2",1605,"NaranjoDiaz2020",7.86375,-76.57633,"Colombia","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","forest","intense","primary vegetation-substantial",8,0
+"151","1605_4","1605_2","1605_3",1605,"NaranjoDiaz2020",7.8833,-76.60219,"Colombia","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","forest","intense","primary vegetation-substantial",4,0
 "152","1638_1","1638_1","1638_2",1638,"Rezende2013",-19.96708611,-40.57955556,"Brazil","Tropical & Subtropical Moist Broadleaf Forests","urban","human dwellings","light","urban-substantial",10,0
 "153","1638_2","1638_2","1638_2",1638,"Rezende2013",-20.33375278,-41.22955556,"Brazil","Tropical & Subtropical Moist Broadleaf Forests","urban","human dwellings","light","urban-substantial",7,0
 "154","1638_3","1638_1","1638_1",1638,"Rezende2013",-19.96708611,-40.57955556,"Brazil","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","Atlantic forest","minimal","primary vegetation-minimal",5,0
@@ -194,8 +194,8 @@
 "193","1813_10","1813_5","1813_2",1813,"Nagm2007",3.242777778,-60.68444444,"Brazil","Tropical & Subtropical Grasslands, Savannas & Shrublands","primary vegetation","primary vegetation","minimal","primary vegetation-minimal",4,1
 "194","1813_10","1813_5","1813_5",1813,"Nagm2007",3.242777778,-60.68444444,"Brazil","Tropical & Subtropical Grasslands, Savannas & Shrublands","primary vegetation","primary vegetation","minimal","primary vegetation-minimal",4,1
 "195","1813_2","1813_1","1813_2",1813,"Nagm2007",2.709444444,-60.83444444,"Brazil","Tropical & Subtropical Grasslands, Savannas & Shrublands","primary vegetation","primary vegetation","minimal","primary vegetation-minimal",1,1
-"196","1813_2","1813_1","1813_5",1813,"Nagm2007",2.709444444,-60.83444444,"Brazil","Tropical & Subtropical Grasslands, Savannas & Shrublands","primary vegetation","primary vegetation","minimal","primary vegetation-minimal",1,1
-"197","1813_2","1813_1","1813_5",1813,"Nagm2007",2.909444444,-60.41777778,"Brazil","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","primary vegetation","minimal","primary vegetation-minimal",1,1
+"196","1813_2","1813_1","1813_5",1813,"Nagm2007",2.909444444,-60.41777778,"Brazil","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","primary vegetation","minimal","primary vegetation-minimal",1,1
+"197","1813_2","1813_1","1813_5",1813,"Nagm2007",2.709444444,-60.83444444,"Brazil","Tropical & Subtropical Grasslands, Savannas & Shrublands","primary vegetation","primary vegetation","minimal","primary vegetation-minimal",1,1
 "198","1813_3","1813_3","1813_2",1813,"Nagm2007",2.909444444,-60.41777778,"Brazil","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","primary vegetation","minimal","primary vegetation-minimal",4,1
 "199","1813_4","1813_1","1813_2",1813,"Nagm2007",2.792777778,-60.60111111,"Brazil","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","primary vegetation","light","primary vegetation-substantial",3,1
 "200","1813_4","1813_1","1813_5",1813,"Nagm2007",2.792777778,-60.60111111,"Brazil","Tropical & Subtropical Moist Broadleaf Forests","primary vegetation","primary vegetation","light","primary vegetation-substantial",1,1
