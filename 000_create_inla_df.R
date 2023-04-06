@@ -2,7 +2,7 @@ pacman::p_load("dplyr")
 
 # Read in data
 # subset to unassigned land use categories and where sampling effort not available
-data <- read.csv("data/data.csv")
+data <- read.csv("data/input/americas/data.csv")
 
 data <- data %>% subset(land_use != "cannot decide",
                         land_use_intensity != "cannot decide") %>%
@@ -26,14 +26,7 @@ for (i in unique(data$study_number)){
 
 data <- df
 
-# Scale sampling effort
-load("functions/scale_sampling_effort.RData")
-
-#data <- scale_sampling_effort(data) %>%
-  # adjust measurement by sampling effort
- # mutate(measurement_adj = as.numeric(measurement)/as.numeric(rescaled_sampling_effort))
-
-# test not rescaling sampling effort
+# Sampling effort
 data <- data %>%
   # adjust measurement by sampling effort
   mutate(measurement_adj = as.numeric(measurement)/as.numeric(sampling_effort))
@@ -47,6 +40,7 @@ unique(na_df$rescaled_sampling_effort)
 # set NAs to zero
 data$measurement_adj[is.na(data$measurement_adj)] <- 0
 
+############
 # Subset to Anopheles and Aedes, combine land use categories
 
 # Non-aggregated land use categories
@@ -82,7 +76,7 @@ for (i in unique(data_all$study_number)){
 }
 
 # Write to file
-data_lu %>% write.csv("data/data_comb.csv")
+data_lu %>% write.csv("data/input/americas/data_comb.csv")
 
 # Combined land use categories
 data <- data %>%
@@ -129,7 +123,7 @@ data <- data_lu
 # Write to file
 data %>% write.csv("data/inla_input/abundance.csv")
 
-####################################################################
+########################################################################################
 # Species richness
 data <- read.csv("data/inla_input/abundance.csv")
 
@@ -181,9 +175,6 @@ df_all %>%
   # Write to file
   write.csv("data/inla_input/richness.csv")
 
-df_all %>% 
-  mutate(amazon = amazon_pts$amazon) %>% 
-  write.csv("data/inla_input/richness.csv")
 
 ##### Anopheline species richness 
 # Calculate site-level species richness, excluding zero records
@@ -235,10 +226,6 @@ df_all %>%
   # Write to file
   write.csv("data/inla_input/ano_richness.csv")
 
-df_all %>% 
-  mutate(amazon = amazon_pts$amazon) %>% 
-  write.csv("data/inla_input/ano_richness.csv")
-
 ##### Aedes species richness 
 # Calculate site-level species richness, excluding zero records
 richness <- data %>% subset(species_studied == "multiple") %>% 
@@ -287,5 +274,4 @@ amazon_pts$amazon[is.na(amazon_pts$AREA)] <- 0
 
 df_all %>% 
   mutate(amazon = amazon_pts$amazon) %>% 
-# Write to file
   write.csv("data/inla_input/aed_richness.csv")
