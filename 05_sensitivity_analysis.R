@@ -41,7 +41,7 @@ for (i in c("Anopheles", "Aedes")){
   
   if (i == "Anopheles"){
     df_inla <- data_abun %>% subset(genus == "Anopheles") %>%
-      subset(country != "Brazil") %>% #subset(study_number == "1156") %>%
+      subset(country != "Brazil") %>% 
       mutate(abundance = measurement_adj)
     
     length(unique(df_inla$study_number))
@@ -49,7 +49,7 @@ for (i in c("Anopheles", "Aedes")){
     
   } else{
     df_inla <- data_abun %>% subset(genus == "Aedes") %>%
-      subset(country != "Brazil") %>% #subset(study_number == "1491") %>%
+      subset(country != "Brazil") %>% 
       mutate(abundance = measurement_adj)
     
     length(unique(df_inla$study_number))
@@ -323,9 +323,9 @@ library(dismo)
 
 studies <- unique(data_abun$study_number)
 kfold  <- data.frame(study_number = studies, kfold = kfold(studies, 8)) %>% 
- write.csv("data/inla_input/kfold_22_01_07.csv", row.names =FALSE)
+ write.csv("data/inla_input/kfold_23_04_01.csv", row.names =FALSE)
 
-kfold <- read.csv("data/inla_input/kfold_22_01_07.csv")
+kfold <- read.csv("data/inla_input/kfold_23_04_01.csv")
 
 # Abundance
 ##########################################
