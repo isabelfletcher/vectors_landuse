@@ -166,7 +166,7 @@ run_mod_selection <- function(df_inla, land_use_var, response, filename, species
                   verbose = FALSE,
                   control.predictor=list(compute = TRUE),
                   control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-      save(mod, file = paste0("models/americas/abundance/model_selection/", i, filename, mod_name, "_mod.RData"))
+      save(mod, file = paste0("models/abundance/model_selection/", i, filename, mod_name, "_mod.RData"))
     }else{
       
       mod <- inla(formula, data = df_inla,
@@ -175,7 +175,7 @@ run_mod_selection <- function(df_inla, land_use_var, response, filename, species
                   control.predictor=list(compute = TRUE, link = 1),
                   #control.family = list(link = "log"),
                   control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-      save(mod, file = paste0("models/americas/richness/model_selection/", i, filename, mod_name, "_mod.RData"))
+      save(mod, file = paste0("models/richness/model_selection/", i, filename, mod_name, "_mod.RData"))
     }
     
     
@@ -222,7 +222,7 @@ run_mod <- function(df_inla, land_use_var, response, filename, species){
                 verbose = FALSE,
                 control.predictor=list(compute = TRUE),
                 control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-    save(mod, file = paste0("models/americas/abundance/", filename, mod_name, "_mod.RData"))
+    save(mod, file = paste0("models/abundance/", filename, mod_name, "_mod.RData"))
   }else{
     
     formula <- formula(paste(response, var, 
@@ -234,7 +234,7 @@ run_mod <- function(df_inla, land_use_var, response, filename, species){
                 control.predictor=list(compute = TRUE, link = 1),
                 #control.family = list(link = "log"),
                 control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-    save(mod, file = paste0("models/americas/richness/", filename, mod_name, "_mod.RData"))
+    save(mod, file = paste0("models/richness/", filename, mod_name, "_mod.RData"))
   }
   
 }
@@ -278,7 +278,7 @@ run_deforest_mod <- function(df_inla, response, deforest_var, filename, species)
                 verbose = FALSE,
                 control.predictor=list(compute = TRUE),
                 control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-    save(mod, file = paste0("models/americas/abundance/", filename, mod_name, "_mod.RData"))
+    save(mod, file = paste0("models/abundance/", filename, mod_name, "_mod.RData"))
   }else{
     
     formula <- formula(paste(response, var, 
@@ -290,7 +290,7 @@ run_deforest_mod <- function(df_inla, response, deforest_var, filename, species)
                 control.predictor=list(compute = TRUE, link = 1),
                 #control.family = list(link = "log"),
                 control.compute=list(cpo = TRUE, waic = TRUE, dic = TRUE, config = TRUE))
-    save(mod, file = paste0("models/americas/richness/", filename, mod_name, "_mod.RData"))
+    save(mod, file = paste0("models/richness/", filename, mod_name, "_mod.RData"))
   }
   
 }
@@ -305,7 +305,7 @@ save(run_deforest_mod, file = "functions/run_deforest_mod.RData")
 
 create_richness_df <- function(species_out, genus){
   
-  data <- read.csv("data/input/americas/inla_input/abundance.csv") %>% aggregate_lui("all")
+  data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all")
   
   if(genus == "total"){
   
@@ -421,7 +421,7 @@ save(create_richness_df, file = "functions/create_richness_df.RData")
 # Create richness df for deforestation analysis
 create_deforest_richness_df <- function(genus){
   
-  data <- read.csv("data/input/americas/inla_input/deforestation_data.csv") 
+  data <- read.csv("data/inla_input/deforestation_data.csv") 
   
   # Total species richness
   if(genus == "total"){
@@ -476,7 +476,7 @@ create_deforest_richness_df <- function(genus){
   return(richness_data)
 }
 
-save(create_deforest_richness_df, file = "functions/create_deforest_richness_df")
+save(create_deforest_richness_df, file = "functions/create_deforest_richness_df.RData")
 
 ###########################################################################
 # Extract fixed effects from land use models
@@ -717,7 +717,7 @@ extract_residuals <- function(mod, genus, response){
     
     if (grepl("Anopheles", genus)==TRUE){
       
-      data <- read.csv("data/input/americas/inla_input/abundance_unscaled_sampling_effort.csv") %>% aggregate_lui("all") %>% 
+      data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>% 
         subset(genus == "Anopheles") %>%
         mutate(abundance = measurement_adj) %>%
         dplyr::group_by(site_number, study_block, study_number, study_sample, species_name, LUI, biome) %>%
@@ -729,7 +729,7 @@ extract_residuals <- function(mod, genus, response){
              genus = genus)
   
     }else{if(grepl("Aedes", genus)==TRUE){
-      data <- read.csv("data/input/americas/inla_input/abundance_unscaled_sampling_effort.csv") %>% aggregate_lui("all") %>% 
+      data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>% 
         subset(genus == "Aedes") %>%
         mutate(abundance = measurement_adj) %>%
         dplyr::group_by(site_number, study_block, study_number, study_sample, species_name, LUI, biome) %>%
@@ -743,7 +743,7 @@ extract_residuals <- function(mod, genus, response){
       
       
     }  else{
-      data <- read.csv("data/input/americas/inla_input/abundance_unscaled_sampling_effort.csv") %>% aggregate_lui("all") %>% 
+      data <- read.csv("data/inla_input/abundance.csv") %>% aggregate_lui("all") %>% 
         mutate(abundance = measurement_adj) %>%
         dplyr::group_by(site_number, study_block, study_number, study_sample, species_name, LUI, biome) %>%
         dplyr::summarise(abundance = sum(abundance)) %>%
@@ -756,20 +756,20 @@ extract_residuals <- function(mod, genus, response){
     }
   } else {
     if(grepl("Anopheles", genus)==TRUE){
-      data <- read.csv("data/input/americas/inla_input/ano_richness_unscaled_sampling_effort.csv") %>%
+      data <- read.csv("data/inla_input/ano_richness.csv") %>%
         mutate(response_value = richness,
                response_fitted = mod$summary.fitted.values$mean) %>%
         mutate(residuals = response_fitted - response_value,
                genus = "Anopheles")
     } else {
       if(grepl("Aedes", genus)==TRUE){
-        data <- read.csv("data/input/americas/inla_input/aed_richness_unscaled_sampling_effort.csv") %>%
+        data <- read.csv("data/inla_input/aed_richness.csv") %>%
           mutate(response_value = richness,
                  response_fitted = mod$summary.fitted.values$mean) %>%
           mutate(residuals = response_fitted - response_value,
                  genus = "Aedes")
       } else{
-        data <- read.csv("data/input/americas/inla_input/richness_unscaled_sampling_effort.csv") %>%
+        data <- read.csv("data/inla_input/richness.csv") %>%
           mutate(response_value = richness,
                  response_fitted = mod$summary.fitted.values$mean) %>%
           mutate(residuals = response_fitted - response_value,
