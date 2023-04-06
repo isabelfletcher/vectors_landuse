@@ -122,6 +122,7 @@ data <- data_lu
 
 # Write to file
 data %>% write.csv("data/inla_input/abundance.csv")
+data %>% write.csv("data/hansen/abundance.csv")
 
 ########################################################################################
 # Species richness
